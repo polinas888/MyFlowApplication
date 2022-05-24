@@ -5,13 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.flowapplication.channel.ChannelFragment
 import com.example.flowapplication.flow.FlowFragment
 import com.example.flowapplication.liveData.LiveDataFragment
 import com.example.flowapplication.sharedFlow.SharedFlowFragment
 import com.example.flowapplication.stateFlow.StateFlowFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class GeneralFragment : Fragment() {
     lateinit var stateFlowButton: Button
@@ -19,6 +25,9 @@ class GeneralFragment : Fragment() {
     lateinit var sharedFlowButton: Button
     lateinit var flowButton: Button
     lateinit var channelButton: Button
+    lateinit var listFlowButton: Button
+
+    private val listFlows: MutableList<String> = arrayListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -33,6 +42,7 @@ class GeneralFragment : Fragment() {
         sharedFlowButton = view.findViewById(R.id.shared_flow_button)
         flowButton = view.findViewById(R.id.flow_button)
         channelButton = view.findViewById(R.id.channel_button)
+        listFlowButton = view.findViewById(R.id.list_flow_button)
 
         stateFlowButton.setOnClickListener {
             val fragment = StateFlowFragment()
@@ -58,5 +68,29 @@ class GeneralFragment : Fragment() {
             val fragment = ChannelFragment()
             fragmentManager?.beginTransaction()?.replace(R.id.host_fragment, fragment)?.commit()
         }
+
+
+        listFlowButton.setOnClickListener {
+            lifecycleScope.launch {
+                for (i in 1..10) {
+                    getFirstFlow().combine(getSecondFlow()) { firstFlow, secondFlow ->
+                        "$firstFlow $secondFlow"
+                    }.collect {
+                        listFlows.add(it)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getFirstFlow() = flow {
+        delay(500L)
+        emit("A" + Random.nextInt(0, 100).toString())
+    }
+
+    private fun getSecondFlow() = flow {
+        delay(500L)
+        emit("B" + Random.nextInt(0, 100).toString())
     }
 }
+
