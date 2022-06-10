@@ -25,7 +25,6 @@ class GeneralFragment : Fragment() {
     lateinit var sharedFlowButton: Button
     lateinit var flowButton: Button
     lateinit var channelButton: Button
-    lateinit var listFlowButton: Button
 
     private val listFlows: MutableList<String> = arrayListOf()
 
@@ -42,7 +41,6 @@ class GeneralFragment : Fragment() {
         sharedFlowButton = view.findViewById(R.id.shared_flow_button)
         flowButton = view.findViewById(R.id.flow_button)
         channelButton = view.findViewById(R.id.channel_button)
-        listFlowButton = view.findViewById(R.id.list_flow_button)
 
         stateFlowButton.setOnClickListener {
             val fragment = StateFlowFragment()
@@ -70,17 +68,17 @@ class GeneralFragment : Fragment() {
         }
 
 
-        listFlowButton.setOnClickListener {
-            lifecycleScope.launch {
-                for (i in 1..10) {
-                    getFirstFlow().combine(getSecondFlow()) { firstFlow, secondFlow ->
-                        "$firstFlow $secondFlow"
-                    }.collect {
-                        listFlows.add(it)
-                    }
-                }
-            }
-        }
+//        listFlowButton.setOnClickListener {
+//            lifecycleScope.launch {
+//                for (i in 1..10) {
+//                    getFirstFlow().combine(getSecondFlow()) { firstFlow, secondFlow ->
+//                        "$firstFlow $secondFlow"
+//                    }.collect {
+//                        listFlows.add(it)
+//                    }
+//                }
+//            }
+//        }
     }
 
     private fun getFirstFlow() = flow {
